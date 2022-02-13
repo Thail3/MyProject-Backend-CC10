@@ -4,6 +4,7 @@ const friendController = require("../Controllers/friendController");
 
 const router = express.Router();
 
+router.get("/unknown", authenticate, friendController.getUnknownUsers);
 router.get("/", authenticate, friendController.getAllFriends);
 router.post("/", authenticate, friendController.requestFriend);
 router.patch("/:friendId", authenticate, friendController.updateFriend);

@@ -9,14 +9,14 @@ module.exports = (sequelize, DataTypes) => {
     });
     Like.belongsTo(models.Post, {
       foreignKey: {
-        name: "commentId",
+        name: "postId",
         allowNull: false,
       },
     });
     Like.belongsTo(models.Comment, {
       foreignKey: {
-        name: "postId",
-        allowNull: false,
+        name: "commentId",
+        allowNull: true,
       },
     });
   };

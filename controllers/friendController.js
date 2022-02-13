@@ -1,6 +1,34 @@
 const { Op } = require("sequelize");
 const { Friend, User } = require("../models");
 
+exports.getUnknownUsers = async (req, res, next) => {
+  try {
+    const friends = await Friend.findAll({
+      where: {
+        [Op.or]: [{ requestToId: req.user.id }, { requestFromId: req.user.id }],
+      },
+    });
+
+    const friendIds = friends.reduce(
+      (acc, item) => {
+        if (req.user.id === item.requestFromId) {
+          acc.push(item.requestToId);
+        } else {
+          acc.push(item.requestFromId);
+        }
+        return acc;
+      },
+      [req.user.id]
+    );
+    const users = await User.findAll({
+      where: { id: { [Op.notIn]: friendIds } },
+    });
+    res.status(200).json({ users });
+  } catch (err) {
+    next(err);
+  }
+};
+
 //*เรียกดูเพื่อน secound thing i do
 exports.getAllFriends = async (req, res, next) => {
   try {
@@ -101,6 +129,9 @@ exports.updateFriend = async (req, res, next) => {
         status: "REQUESTED",
       },
     });
+    console.log(friend);
+    console.log(req.user.id);
+    console.log(friendId);
     //!ถ้าไม่เจอ friend มันจะส่ง status 400 Bad Request
     if (!friend) {
       return res.status(400).json({ message: "This friend request not found" });

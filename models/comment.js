@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     Comment.hasMany(models.Like, {
       foreignKey: {
         name: "commentId",
-        allowNull: false,
+        allowNull: true,
       },
     });
     Comment.belongsTo(models.Post, {

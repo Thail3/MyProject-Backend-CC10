@@ -31,7 +31,12 @@ module.exports = (sequelize, DataTypes) => {
           isEmail: true,
         },
       },
+      about: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       profileImg: DataTypes.STRING,
+      backgroundImg: DataTypes.STRING,
     },
     { underscored: true }
   );

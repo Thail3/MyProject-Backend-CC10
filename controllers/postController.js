@@ -32,6 +32,55 @@ exports.createPost = async (req, res, next) => {
     next(e);
   }
 };
+//*function updatePost
+exports.updatePost = async (req, res, next) => {
+  try {
+    const { title } = req.body;
+    console.log(title);
+    const { id } = req.params;
+    if (!title && !req.file) {
+      return res.status(400).json({ message: "Title or image is required" });
+    }
+    let result = {};
+    if (req.file) {
+      result = await uploadPromise(req.file.path);
+      fs.unlinkSync(req.file.path);
+    }
+
+    await Post.update(
+      {
+        title,
+        img: result.secure_url,
+      },
+      { where: { id, userId: req.user.id } }
+    );
+
+    const updatedPost = await Post.findOne({
+      where: { id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName", "profileImg"],
+        },
+        {
+          model: Comment,
+
+          include: {
+            model: User,
+            attributes: ["id", "firstName", "lastName", "profileImg"],
+          },
+        },
+        { model: Like, attributes: ["id", "userId", "postId"] },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    console.log(updatedPost);
+
+    res.status(201).json({ updatedPost });
+  } catch (e) {
+    next(e);
+  }
+};
 //*function deletePost
 exports.deletePost = async (req, res, next) => {
   const transaction = await sequelize.transaction();
@@ -79,15 +128,17 @@ exports.getAllPost = async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ["id", "firstName", "lastName", "profileImg"],
+          attributes: ["id", "firstName", "lastName", "profileImg", "about"],
         },
         {
           model: Comment,
+
           include: {
             model: User,
             attributes: ["id", "firstName", "lastName", "profileImg"],
           },
         },
+        { model: Like, attributes: ["id", "userId", "postId"] },
       ],
       order: [["createdAt", "DESC"]],
     });

@@ -18,7 +18,7 @@ app.use("/users", userRoute);
 app.use("/friends", friendRoute);
 app.use("/posts", postRoute);
 app.use("/comments", commentRoute);
-app.use("/like", likeRoute);
+app.use("/likes", likeRoute);
 
 app.use((req, res) => {
   res.status(400).json({ message: "resource not found on this server" });

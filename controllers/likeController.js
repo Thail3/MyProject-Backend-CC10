@@ -30,7 +30,9 @@ exports.createLike = async (req, res, next) => {
 exports.deleteLike = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const like = await Like.findOne({ where: { id } });
+    const like = await Like.findOne({
+      where: { postId: id, userId: req.user.id },
+    });
 
     if (!like) {
       return res.status(400).json({ message: "like not found" });

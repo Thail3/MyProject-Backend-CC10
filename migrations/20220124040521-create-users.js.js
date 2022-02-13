@@ -29,7 +29,14 @@ module.exports = {
         unique: true,
         type: Sequelize.STRING,
       },
+      about: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
       profile_img: {
+        type: Sequelize.STRING,
+      },
+      background_img: {
         type: Sequelize.STRING,
       },
       created_at: {

@@ -5,5 +5,6 @@ const likeController = require("../controllers/likeController");
 const router = express.Router();
 
 router.post("/", authenticate, likeController.createLike);
+router.delete("/:id", authenticate, likeController.deleteLike);
 
 module.exports = router;

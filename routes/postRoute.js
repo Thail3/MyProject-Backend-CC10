@@ -8,5 +8,11 @@ const router = express.Router();
 router.get("/", authenticate, postController.getAllPost);
 router.post("/", authenticate, upload.single("img"), postController.createPost);
 router.delete("/:id", authenticate, postController.deletePost);
+router.patch(
+  "/:id",
+  authenticate,
+  upload.single("img"),
+  postController.updatePost
+);
 
 module.exports = router;
