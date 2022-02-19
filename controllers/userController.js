@@ -3,8 +3,6 @@ const cloudinary = require("cloudinary").v2;
 const { User } = require("../models");
 
 exports.updateProfileImg = async (req, res, next) => {
-  console.log(req.file);
-
   cloudinary.uploader.upload(req.file.path, async (err, result) => {
     if (err) return next(err);
     await User.update(
@@ -36,14 +34,55 @@ exports.updateBackgroundImg = async (req, res, next) => {
     }
 
     fs.unlinkSync(req.file.path);
-    res.json({ message: "update profile img completed" });
+    res.json({ message: "update background picture completed" });
   });
 };
 
+exports.updateAbout = async (req, res, next) => {
+  try {
+    const { about } = req.body;
+    const { id } = req.params;
+
+    if (!about) {
+      return res.status(400).json({ message: "About id required" });
+    }
+
+    await User.update(
+      {
+        about,
+      },
+      { where: { id: req.user.id } }
+    );
+
+    const updateUser = await User.findOne({ where: { id } });
+    res.status(200).json({ updateUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getMe = (req, res, next) => {
-  const { id, firstName, lastName, profileImg, email, phoneNumber } = req.user;
+  const {
+    id,
+    firstName,
+    lastName,
+    profileImg,
+    email,
+    about,
+    phoneNumber,
+    backgroundImg,
+  } = req.user;
   return res.status(200).json({
-    user: { id, firstName, lastName, profileImg, email, phoneNumber },
+    user: {
+      id,
+      firstName,
+      lastName,
+      profileImg,
+      email,
+      about,
+      phoneNumber,
+      backgroundImg,
+    },
   });
 };
 

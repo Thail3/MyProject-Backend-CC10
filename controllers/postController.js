@@ -60,7 +60,7 @@ exports.updatePost = async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ["id", "firstName", "lastName", "profileImg"],
+          attributes: ["id", "firstName", "lastName", "profileImg", "about"],
         },
         {
           model: Comment,
@@ -124,18 +124,32 @@ exports.getAllPost = async (req, res, next) => {
     );
 
     const posts = await Post.findAll({
-      where: { userId: userIds },
+      where: { userId: req.user.id },
+      // where: { userId: userIds },
       include: [
         {
           model: User,
-          attributes: ["id", "firstName", "lastName", "profileImg", "about"],
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "profileImg",
+            "about",
+            "backgroundImg",
+          ],
         },
         {
           model: Comment,
 
           include: {
             model: User,
-            attributes: ["id", "firstName", "lastName", "profileImg"],
+            attributes: [
+              "id",
+              "firstName",
+              "lastName",
+              "profileImg",
+              "backgroundImg",
+            ],
           },
         },
         { model: Like, attributes: ["id", "userId", "postId"] },

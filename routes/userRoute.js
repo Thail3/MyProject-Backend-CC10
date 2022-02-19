@@ -10,11 +10,19 @@ router.get("/me", authenticate, userController.getMe);
 router.get("/:id", authenticate, userController.getFriendData);
 router.post("/register", authController.register);
 router.post("/login", authController.login);
+
 router.patch(
   "/profile-img",
   authenticate,
   upload.single("profileImg"),
   userController.updateProfileImg
 );
+router.patch(
+  "/background-img",
+  authenticate,
+  upload.single("backgroundImg"),
+  userController.updateBackgroundImg
+);
+router.patch("/:id", authenticate, userController.updateAbout);
 
 module.exports = router;
