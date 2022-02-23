@@ -65,3 +65,31 @@ exports.deleteComment = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updateComment = async (req, res, next) => {
+  try {
+    const { title } = req.body;
+    const { id } = req.params;
+
+    await Comment.update(
+      {
+        title,
+      },
+      {
+        where: { id, userId: req.user.id },
+      }
+    );
+
+    const updateComment = await Comment.findOne({
+      where: { id },
+      include: {
+        model: User,
+        attribute: ["id", "firstName", "lastName", "profileImg"],
+      },
+    });
+
+    res.status(201).json({ updateComment });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -124,8 +124,8 @@ exports.getAllPost = async (req, res, next) => {
     );
 
     const posts = await Post.findAll({
-      where: { userId: req.user.id },
-      // where: { userId: userIds },
+      // where: { userId: req.user.id },
+      where: { userId: userIds },
       include: [
         {
           model: User,
@@ -157,6 +157,47 @@ exports.getAllPost = async (req, res, next) => {
       order: [["createdAt", "DESC"]],
     });
     res.status(200).json({ posts });
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.getMyPost = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const myPost = await Post.findAll({
+      where: { userId: id },
+      include: [
+        {
+          model: User,
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "profileImg",
+            "about",
+            "backgroundImg",
+          ],
+        },
+        {
+          model: Comment,
+
+          include: {
+            model: User,
+            attributes: [
+              "id",
+              "firstName",
+              "lastName",
+              "profileImg",
+              "backgroundImg",
+            ],
+          },
+        },
+        { model: Like, attributes: ["id", "userId", "postId"] },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    res.json({ myPost });
   } catch (e) {
     next(e);
   }
